@@ -1,0 +1,15 @@
+pryatki_embed = discord.Embed(type='rich',title='Прятки',description='Информация о сервере')
+
+pryatki_embed.clear_fields()
+
+pryatki_embed.add_field(name='Состояние',value='Онлайн')
+pryatki_embed.add_field(name='Версия',value=query.software.version)
+pryatki_embed.add_field(name='Онлайн',value='{} / {}'.format(query.players.online, query.players.max))
+pryatki_embed.add_field(name='IP-адрес',value=query.raw['hostip'],inline=False)
+pryatki_embed.add_field(name='Игроки',value=', '.join(query.players.names),inline=False)
+
+pryatki_embed.add_field(name='Состояние',value='Оффлайн')
+
+pryatki_embed.add_field(name='Состояние',value='Неизвестно')
+
+await pryatki_msg.edit(embed=pryatki_embed)
