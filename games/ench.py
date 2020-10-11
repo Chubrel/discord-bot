@@ -1,7 +1,20 @@
 #! python
 # coding=utf-8
+#from discord.ext.commands import Converter
+from random import choice, sample
 
-import random
+
+def rome(x: int) -> str:
+    trans_arab = {1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI', 10: 'X'}
+    rome_ = trans_arab.get(x)
+    if rome_ is None:
+        raise ValueError
+    else:
+        return rome_
+
+
+def get_class_name_from_id(ench_id: str) -> str:
+    return ench_id.replace('_', ' ').title().replace(' ', '')
 
 
 class Common:
@@ -16,9 +29,8 @@ class Common:
                 s += '_' + i.lower()
         return s[1:]
 
-
-def get_class_name_from_id(ench_id):
-    return ench_id.replace('_', ' ').title().replace(' ', '')
+    def __str__(self):
+        return self.__class__.__name__
 
 
 # ENCHANTMENTS
@@ -381,6 +393,9 @@ class Head(Wearable):
 
 class Compass(Enchantable):
     pass
+
+
+# PARSERS
 
 
 if __name__ == '__main__':

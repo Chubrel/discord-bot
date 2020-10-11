@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\alex9\OneDrive\Desktop\Прог\discord_bot\venv"
+VIRTUAL_ENV="C:\Users\alex9\OneDrive\Desktop\Prog\discord_bot\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
