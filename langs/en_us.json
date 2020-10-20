@@ -43,10 +43,10 @@
 		"inaccurate_input": [
 			"Might you mean ${guess}?"
 		],
-		"yes": [
+		"true": [
 			"Yes"
 		],
-		"no": [
+		"false": [
 			"No"
 		]
 	},

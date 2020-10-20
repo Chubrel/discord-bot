@@ -9,8 +9,7 @@ from random import choice, sample
 from string import Template
 import discord
 from discord.ext import commands
-from games import ench
-
+from tasks import ench
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
@@ -26,19 +25,21 @@ games = ['numb', 'b&c', 'stones']
 tests = ['ench']
 langs = ['ru_ru', 'en_us']
 
-default_lang = 'en_us'
+DEFAULT_LANG = 'en_us'
 
-file_not_found = "File not found: '{}'"
-no_subcommand = 'No subcommand'
-cant_read = "Can't read data from '{}'"
+FILE_NOT_FOUND = "File not found: '{}'"
+NO_SUBCOMMAND = 'No subcommand'
+CANNOT_READ = "Can't read data from '{}'"
 
+MAX_SPACES = 8
+MAX_NAME_LEN = 40
 
 def load_data(file_name: str) -> dict:
     try:
         with open(file_name, 'rb') as db:
             data_ = pickle.load(db)
     except (FileNotFoundError, pickle.UnpicklingError):
-        print(cant_read.format(file_name))
+        print(CANNOT_READ.format(file_name))
         data_ = {}
     return data_
 
@@ -53,19 +54,17 @@ def load_lang(name: str) -> dict:
         with open(f'langs/{name}.json', encoding='utf-8') as lang_file:
             return json.load(lang_file)
     except (FileNotFoundError, json.JSONDecodeError):
-        raise ValueError(cant_read.format(f'langs/{name}.json'))
+        raise ValueError(CANNOT_READ.format(f'langs/{name}.json'))
 
 
-def init_guild(guild_id: int, lang: str = default_lang, extra_langs: set = None,
+def init_guild(guild_id: int, lang: str = DEFAULT_LANG, extra_langs: set = None,
                home: int = None, school: int = None, activities: dict = None) -> None:
     global data
     if guild_id not in data:
         if activities is None:
             activities = {}
         if extra_langs is None:
-            extra_langs = {default_lang}
-        else:
-            extra_langs |= {default_lang}
+            extra_langs = {DEFAULT_LANG}
         data[guild_id] = {'lang': lang, 'extra_langs': extra_langs,
                           'home': home, 'school': school, 'activities': activities}
 
@@ -93,7 +92,7 @@ def abort_activities(guild_id: int, activity: str) -> None:
 
 def get_options(path: tuple) -> list:
     global lang
-    opt = lang[default_lang]
+    opt = lang[DEFAULT_LANG]
     for el in path:
         opt = opt[el]
     return list(opt.keys())
@@ -101,7 +100,7 @@ def get_options(path: tuple) -> list:
 
 def phrase(guild_id: int, lang_path: tuple, replace_dict: dict = None, rand: bool = False) -> str:
     global lang, data
-    #init_guild(guild_id)
+    # init_guild(guild_id)
     lang_name = data[guild_id]['langs']
     phras = lang[lang_name]
     for el in lang_path:
@@ -113,24 +112,36 @@ def phrase(guild_id: int, lang_path: tuple, replace_dict: dict = None, rand: boo
     return phras.replace('\\n', '\n')
 
 
-class IntConvert(commands.Converter):
-    async def convert(self, ctx, argument):
-        if argument.isnumeric():
-            return int(argument)
-        else:
-            trans_roman = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
-            try:
-                arabic = [trans_roman[i] for i in argument.upper()]
-            except KeyError:
-                raise commands.BadArgument
-            i = 1
-            while i < len(arabic):
-                if arabic[i - 1] < arabic[i]:
-                    arabic[i - 1] = -arabic[i - 1]
-                    i += 2
-                else:
-                    i += 1
-            return sum(arabic)
+def normalize(guild_id: int, old_str: str) -> str:
+    global data, lang
+    norm_str = ''
+    for letter in old_str:
+        if letter.isalpha() or letter.isspace():
+            norm_str += letter
+    for i in data[guild_id]['extra_langs']:
+        for k, v in lang[i]['normalize'].items():
+            norm_str.replace(k, v)
+    return norm_str.lower()
+
+
+def errors_count(s1: str, s2: str) -> int:
+    # Evaluates Damerau-Levenshtein distance
+    ls1 = len(s1)
+    ls2 = len(s2)
+    m = [[0] * (ls2 + 1) for _ in range(ls1 + 1)]
+    for i in range(1, ls1 + 1):
+        m[i][0] = i
+    for j in range(1, ls2 + 1):
+        m[0][j] = j
+    for i in range(1, ls1 + 1):
+        for j in range(1, ls2 + 1):
+            cost = int(s1[i - 1] != s2[j - 1])
+            m[i][j] = min(m[i - 1][j] + 1,  # deletion
+                          m[i][j - 1] + 1,  # insertion
+                          m[i - 1][j - 1] + cost)  # substitution
+            if i != 1 != j and s1[i - 1] == s2[j - 2] and s1[i - 2] == s2[j - 1]:
+                m[i][j] = min(m[i][j], m[i - 2][j - 2] + cost)  # transposition
+    return m[ls1][ls2]
 
 
 ench_tests = get_options(('ench', 'questions'))
@@ -149,72 +160,84 @@ bot = commands.Bot(command_prefix='&')
 # ENCH START
 
 
-def max_ench_lvl():
-    pass
+class Answer:
+
+    def __init__(self, list_: tuple, types: tuple):
+        self.list = list_
+        self.types = types
+
+    def save(self):
+        pass
 
 
-class RawStr:
+class Reply:
 
-    def __init__(self, guild_id: int, raw_str: str):
-        self.raw_str = raw_str.lower()
+    def __init__(self, guild_id: int, user_id: int, raw_str: str):
+        self.raw = normalize(guild_id, raw_str).split()
         self.guild_id = guild_id
+        #self.answer = data[guild_id]['activities'][user_id]['test']
 
-    def errors_count(self, s2: str) -> int:
-        # Evaluates Damerau-Levenshtein distance
-        s1 = self.raw_str
-        ls1 = len(s1)
-        ls2 = len(s2)
-        m = [[0] * (ls2 + 1) for _ in range(ls1 + 1)]
-        for i in range(1, ls1 + 1):
-            m[i][0] = i
-        for j in range(1, ls2 + 1):
-            m[0][j] = j
-        for i in range(1, ls1 + 1):
-            for j in range(1, ls2 + 1):
-                cost = int(s1[i - 1] != s2[j - 1])
-                m[i][j] = min(m[i - 1][j] + 1,  # deletion
-                              m[i][j - 1] + 1,  # insertion
-                              m[i - 1][j - 1] + cost)  # substitution
-                if i != 1 != j and s1[i - 1] == s2[j - 2] and s1[i - 2] == s2[j - 1]:
-                    m[i][j] = min(m[i][j], m[i - 2][j - 2] + cost)  # transposition
-        return m[ls1][ls2]
+    def compare(self, answer: Answer):
+        pass
 
-    def similar(self, string: str) -> int:
+    def similar(self, string: str) -> str:
+        global lang, data
         raw_str = self.raw_str
         len_raw = len(raw_str)
         len_str = len(string)
         max_error = max(len_str // 2 - 1, 0)
         pass_limit = max(len_str // 3 - 1, 0)
+
+        for lang_name in data[self.guild_id]['extra_langs']:
+            lang[lang_name]['ench']['enchantments'][]
+            err_id = self.similar(ench_name)
+
         if abs(len_raw - len_str) <= max_error:
             err_count = self.errors_count(string.lower())
             if err_count <= pass_limit:
                 return 2
             elif err_count <= max_error:
                 return 1
-        return 0
+            return 0
 
-    def parse_as_ench(self) -> str:
+    def ench_parse(self) -> str:
         global lang, data
-        lang_name = data[self.guild_id]['lang']
-        enchantments = lang[lang_name]['ench']['enchantments']
-        for ench_id, ench_name in enchantments.items():
-            err_id = self.similar(ench_name)
-            if err_id == 2:
-                return
-            elif err_id == 1:
-                return
+        if err_id == 2:
+            return
+        elif err_id == 1:
+            return
         return
 
-    def parse_as_item(self) -> str:
+    def item_parse(self) -> str:
+        pass
+
+    def max_ench_lvl(self):
         pass
 
 
-class Answer:
-    pass
+    def int_parse(self) -> int:
+        if argument.isnumeric():
+            return int(argument)
+        else:
+            trans_roman = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
+            try:
+                arabic = [trans_roman[i] for i in argument.upper()]
+            except KeyError:
+                raise commands.BadArgument
+            i = 1
+            while i < len(arabic):
+                if arabic[i - 1] < arabic[i]:
+                    arabic[i - 1] = -arabic[i - 1]
+                    i += 2
+                else:
+                    i += 1
+            return sum(arabic)
 
 
-class Reply:
-    pass
+class Response:
+
+    def __init__(self, reply: str):
+        self.reply = reply
 
 
 # ENCH END
@@ -253,6 +276,11 @@ async def kill(ctx):
 async def kill_error(ctx, error):
     if isinstance(error, commands.CheckFailure):
         await ctx.channel.send(file=discord.File('sounds/poshyol_nahuj.ogg', 'kill.ogg'))
+
+
+@bot.command()
+async def see(ctx):
+    await ctx.message.add_reaction('👁')
 
 
 @bot.group(name='home')
@@ -332,7 +360,8 @@ async def set_school(ctx, arg):
     else:
         tests_count = count_activities(guild_id, 'test')
         if tests_count != 0 and arg != 'confirm':
-            await ctx.channel.send(phrase(ctx.guild.id, ('messages', 'setschool_warning'), {'tests_count': tests_count}))
+            await ctx.channel.send(
+                phrase(ctx.guild.id, ('messages', 'setschool_warning'), {'tests_count': tests_count}))
         else:
             abort_activities(guild_id, 'test')
             data[guild_id]['school'] = ctx.channel.id
@@ -350,7 +379,8 @@ async def del_school(ctx, arg):
     else:
         tests_count = count_activities(guild_id, 'test')
         if tests_count != 0 and arg != 'confirm':
-            await ctx.channel.send(phrase(ctx.guild.id, ('messages', 'delschool_warning'), {'tests_count': tests_count}))
+            await ctx.channel.send(
+                phrase(ctx.guild.id, ('messages', 'delschool_warning'), {'tests_count': tests_count}))
         else:
             abort_activities(guild_id, 'test')
             data[guild_id]['school'] = None
@@ -365,7 +395,7 @@ async def say(ctx, arg):
         try:
             await ctx.channel.send(msgs[arg])
         except FileNotFoundError:
-            await ctx.channel.send(file_not_found.format(msgs[arg]))
+            await ctx.channel.send(FILE_NOT_FOUND.format(msgs[arg]))
 
 
 @bot.command()
@@ -376,7 +406,7 @@ async def image(ctx, arg):
         try:
             await ctx.channel.send(file=discord.File('images/' + imgs[arg]))
         except FileNotFoundError:
-            await ctx.channel.send(file_not_found.format(imgs[arg]))
+            await ctx.channel.send(FILE_NOT_FOUND.format(imgs[arg]))
 
 
 @bot.command()
@@ -387,7 +417,7 @@ async def sound(ctx, arg):
         try:
             await ctx.channel.send(file=discord.File('sounds/' + snds[arg]))
         except FileNotFoundError:
-            await ctx.channel.send(file_not_found.format(snds[arg]))
+            await ctx.channel.send(FILE_NOT_FOUND.format(snds[arg]))
 
 
 @bot.group()
@@ -414,7 +444,7 @@ async def play(ctx, arg):
 @commands.guild_only()
 async def test(ctx):
     if ctx.invoked_subcommand is None:
-        raise commands.BadArgument(no_subcommand)
+        raise commands.BadArgument(NO_SUBCOMMAND)
 
 
 @test.command(name='list')
@@ -432,6 +462,7 @@ def in_guild_home():
             await ctx.channel.send(phrase(ctx.guild.id, ('messages', 'need_school')))
             return False
         return True
+
     return commands.check(predicate)
 
 
@@ -445,6 +476,7 @@ def in_guild_school():
             await ctx.channel.send(phrase(ctx.guild.id, ('messages', 'need_school')))
             return False
         return True
+
     return commands.check(predicate)
 
 
@@ -452,7 +484,7 @@ def in_guild_school():
 @in_guild_school()
 async def start(ctx):
     if ctx.invoked_subcommand is None:
-        raise commands.BadArgument(no_subcommand)
+        raise commands.BadArgument(NO_SUBCOMMAND)
 
 
 @start.command(name='ench')
@@ -470,6 +502,7 @@ async def ans(ctx, *arg):
 @test.command(name='finish')
 async def ench_finish(ctx):
     pass
+
 
 if __name__ == '__main__':
     with open('token.txt') as token:
