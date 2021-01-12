@@ -1,17 +1,3 @@
-#! python
-# coding=utf-8
-#from discord.ext.commands import Converter
-from random import choice, sample
-
-
-def rome(x: int) -> str:
-    trans_arab = {1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI', 10: 'X'}
-    rome_ = trans_arab.get(x)
-    if rome_ is None:
-        raise ValueError
-    else:
-        return rome_
-
 
 def get_class_name_from_id(ench_id: str) -> str:
     return ench_id.replace('_', ' ').title().replace(' ', '')
@@ -395,15 +381,46 @@ class Compass(Enchantable):
     pass
 
 
-# PARSERS
-
-
 if __name__ == '__main__':
     print(Axe().primaries)
     print(Axe().secondaries)
     print(Elytra().secondaries)
     print(Sword().all_enchs)
-    print(eval(get_class_name_from_id('bane_of_arthropods()')))
+    print(eval(get_class_name_from_id('bane_of_arthropods')))
+    print(globals()[(get_class_name_from_id('bane_of_arthropods'))]())  # timeit autorange (500000, 0.3097972)
+    print(eval(get_class_name_from_id('bane_of_arthropods()')))  # timeit autorange (50000, 0.3532925)
     print(FlintAndSteel().id)
     print(Enchantable.__subclasses__())
     print(Axe.__subclasses__())
+    globals_ = [i for i in locals().values()]
+    enchantable_list = []
+    enchantment_list = {}
+    enchantment_list2 = {}
+    for j in globals_:
+        try:
+            if issubclass(j, Enchantment) and not j.__subclasses__():
+                i = j()
+                enchantment_list[str(i.id)] = [i.max_level, i.max_ench_table_level, i.incompatible_with]
+            elif issubclass(j, Enchantable) and not j.__subclasses__():
+                i = j()
+                for k in i.primaries:
+                    if enchantment_list2.get(k) is None:
+                        enchantment_list2[k] = [set(), set()]
+                    enchantment_list2[k][0].add(i.id)
+
+                for k in i.secondaries:
+                    if enchantment_list2.get(k) is None:
+                        enchantment_list2[k] = [set(), set()]
+                    enchantment_list2[k][1].add(i.id)
+
+                enchantable_list.append(f'{i.id} {i.primaries} {i.secondaries}'.replace("'", '"'))
+        except TypeError:
+            pass
+    for k in enchantment_list:
+        enchantment_list[k].extend(enchantment_list2[k])
+    enchantment_list3 = [[k] + v for k, v in enchantment_list.items()]
+    enchantment_list4 = [str(i).replace('\'', '\"') for i in enchantment_list3]
+    enchantment_list4.sort()
+    enchantable_list.sort()
+    print('\n'.join(enchantment_list4))
+    print('\n'.join(enchantable_list))
