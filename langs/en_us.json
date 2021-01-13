@@ -156,56 +156,56 @@
 			"Defeat",
 			"Gathering",
 			"Strengthening",
-			"Проклятие тяжести",
-			"Точность",
-			"Орлиный глаз",
-			"Удар небес",
-			"Неистовство",
-			"Ярость",
-			"Проклятие жадности",
-			"Переплавка",
-			"Рёв",
-			"Полёт",
-			"Скорость",
-			"Проклятие усталости",
-			"Сопротивление",
-			"Отравление",
-			"Поглощение",
-			"Насыщение",
-			"Проклятие невезения",
-			"Морская сила"
+			"Curse of Gravity",
+			"Accuracy",
+			"Eagle Eye",
+			"Strike of the heavens",
+			"Frenzy",
+			"Rage",
+			"Curse of Greed",
+			"Melting",
+			"Roar",
+			"Flight",
+			"Speed",
+			"Curse of Fatigue",
+			"Resistance",
+			"Poisoning",
+			"Absorption",
+			"Saturation",
+			"Curse of Bad Luck",
+			"Sea power"
 		],
 		"enchantment_properties": {
 			"aqua_affinity": [
-				"Позволяет разрушать блоки под водой со скоростью, как на суше"
+				"Allows you to destroy blocks under water at a speed similar to on land"
 			],
 			"bane_of_arthropods": [
-				"Наносит дополнительный урон и даёт эффект «Замедление IV» паукам, пещерным паукам, чешуйницам, чешуйницам края и пчёлам"
+				"Deals additional damage and gives a "Slowness" IV effect to spiders, cave spiders, silverfish, endermite, and bees"
 			],
 			"blast_protection": [
-				"Увеличивает защиту от взрывов",
-				"Уменьшает отдачу от взрывов"
+				"Increases protection against explosions",
+				"Reduces recoil from the explosions"
 			],
 			"channeling": [
-				"Во время грозы трезубец, попавший в цель, вызывает молнию"
+				"During a thunderstorm, a trident that hits the target causes lightning"
 			],
 			"curse_of_binding": [
-				"Не даёт снять броню"
+				"Does not allow you to remove the armor"
 			],
 			"curse_of_vanishing": [
-				"Предмет пропадает при смерти"
+				"The item disappears at death"
 			],
 			"depth_strider": [
-				"Увеличивает скорость передивижения под водой"
+				"Increases the speed of peredivizheniya under water"
 			],
 			"efficiency": [
-				"Увеличивает скорость разрушения блока"
+				"Increases the speed of block destruction"
 			],
 			"feather_falling": [
-				"Уменьшает урон от падения"
+				"Reduces fall damage"
 			],
 			"fire_aspect": [
-				"Удары поджигают цель"
+				"Strikes sets fire on target"
 			],
 			"fire_protection": [
 				"Увеличивает защиту от огня, лавы и огненных шаров ифритов",
