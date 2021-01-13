@@ -296,8 +296,8 @@
             "secondary_ench_items": []
         },
         "piercing": {
-            "max_level": 5,
-            "max_ench_table_level": 5,
+            "max_level": 4,
+            "max_ench_table_level": 4,
             "incompatible_with": [
                 "multishot"
             ],

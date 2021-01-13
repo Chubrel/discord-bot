@@ -152,6 +152,10 @@ def load_lang(name: str) -> dict:
     return load_json('langs/' + name)
 
 
+def load_ench_data() -> dict:
+    return load_json('activities/ench/' + ENCH_VERSION)
+
+
 def init_guild(guild_id: int) -> None:
     global data, guild_data_dict
     guild = data.guilds.get(guild_id)
@@ -235,6 +239,139 @@ def translate(lang_name: str, lang_path: tuple, replace_dict: dict = None, rand:
     return phrase.replace('\\n', '\n')
 
 
+def get_stats_line(length: int) -> str:
+    global bot, stats_line_emojis
+    if length == 1:
+        line = str(stats_line_emojis[0])
+    else:
+        line = str(stats_line_emojis[1]) + (length - 2) * str(stats_line_emojis[2]) + str(stats_line_emojis[3])
+    return line
+
+
+def get_propotional_lines(*weights) -> list:
+    total = sum(weights)
+    if total != 0:
+        lines = []
+        for i in weights:
+            lines.append(get_stats_line(int(MAX_STATS_LINE_LENGTH * i / total - 0.001) + 1))
+        return lines
+
+
+async def get_stats_line_emojis(guild):
+    global stats_line_emojis
+    emojis = await guild.fetch_emojis()
+    for i in range(len(stats_line_emojis)):
+        for e in emojis:
+            if stats_line_emojis[i] == e.name:
+                stats_line_emojis[i] = e
+
+
+async def fill_reactions(message: discord.Message, reactions: iter):
+    await message.clear_reactions()
+    for reaction in reactions:
+        await message.add_reaction(reaction)
+
+
+async def answer_question(guild_id: int, member_id: int, message: discord.Message, correct: bool):
+    global data
+    ench_data = data.guilds[guild_id].members[member_id].tests.ench
+    embed = message.embeds[0]
+    if correct:
+        ench_data.stats.right += 1
+        embed.colour = 65_280
+        await message.add_reaction('✅')
+    else:
+        ench_data.stats.wrong += 1
+        embed.colour = 16_711_680
+        await message.add_reaction('❌')
+    await message.edit(embed=embed)
+    del ench_data.questions[ench_data.index]
+    if len(ench_data.questions) == 0:
+        await finish_ench(guild_id, member_id)
+    else:
+        if len(ench_data.questions) == ench_data.index:
+            ench_data.index = 0
+            ench_data.questions_loop = True
+        await print_question(guild_id, member_id)
+
+
+async def finish_ench(guild_id: int, member_id: int):
+    global data, bot
+    guild = bot.get_guild(guild_id)
+    member_data = data.guilds[guild_id].members[member_id]
+    school = guild.get_channel(data.guilds[guild_id].school_id)
+    member_data.tests.active = False
+    ench_data = member_data.tests.ench
+    ench_data.message_id = None
+    if not ench_data.some_questions:
+        pass
+    else:
+        stats_data = ench_data.stats
+        counts = [stats_data.right, stats_data.wrong]
+        unanswered = stats_data.questions_count - sum(counts)
+        if unanswered:
+            counts.append(unanswered)
+        total = stats_data.questions_count
+        lines = get_propotional_lines(*counts)
+        fields = [{'name': f'✅  {counts[0]}  ({round(100 * counts[0] / total, 1)}%)',
+                   'value': lines[0], 'inline': False},
+                  {'name': f'❌  {counts[1]}  ({round(100 * counts[1] / total, 1)}%)',
+                   'value': lines[1], 'inline': False}]
+        if unanswered:
+            fields.append({'name': f'❔  {counts[2]}  ({round(100 * counts[2] / total, 1)}%)',
+                           'value': lines[2], 'inline': False})
+        embed_dict = {'title': translate(lang(guild_id), ('tests', 'you_answered')),
+                      'color': 16744192, 'fields': fields}
+        await school.send(f'<@{member_id}>', embed=discord.Embed.from_dict(embed_dict))
+
+
+async def print_question(guild_id: int, member_id: int):
+    global data, bot
+    guild = bot.get_guild(guild_id)
+    guild_data = data.guilds[guild_id]
+    ench_data = guild_data.members[member_id].tests.ench
+    school = guild.get_channel(guild_data.school_id)
+    questions = guild_data.members[member_id].tests.ench.questions
+    embed = discord.Embed.from_dict(questions[ench_data.index].embed_dict)
+    questions_count = len(questions)
+    reactions = ['1️⃣', '2️⃣', '3️⃣']
+    if questions_count != 1:
+        if ench_data.index != 0 or ench_data.questions_loop:
+            embed.add_field(name='⬅️', value=translate(lang(guild_id), ('tests', 'previous_question')), inline=True)
+            reactions.insert(0, '⬅️')
+        embed.add_field(name='➡️', value=translate(lang(guild_id), ('tests', 'next_question')), inline=True)
+        reactions.append('➡️')
+    #embed.add_field(name=translate(lang(guild_id), ('tests', 'for')), value=f'<@{member_id}>', inline=True)
+    msg = await school.send(f'<@{member_id}>', embed=embed)
+    ench_data.message_id = msg.id
+    await fill_reactions(msg, reactions)
+
+
+async def change_question(guild_id: int, member_id: int, message: discord.Message, delta: int):
+    global data
+    ench_data = data.guilds[guild_id].members[member_id].tests.ench
+    questions = ench_data.questions
+    question_index = ench_data.index
+    questions_count = len(questions)
+    new_question_index = (question_index + delta) % questions_count
+    ench_data.questions_loop = ench_data.questions_loop or (question_index + delta == questions_count)
+    ench_data.index = new_question_index
+    embed = discord.Embed.from_dict(questions[new_question_index].embed_dict)
+    reactions = ['1️⃣', '2️⃣', '3️⃣', '➡️']
+    if (new_question_index != 0 or ench_data.questions_loop) and questions_count != 1:
+        embed.add_field(name='⬅️', value=translate(lang(guild_id), ('tests', 'previous_question')), inline=True)
+        reactions.insert(0, '⬅️')
+    embed.add_field(name='➡️', value=translate(lang(guild_id), ('tests', 'next_question')), inline=True)
+    embed.add_field(name=translate(lang(guild_id), ('tests', 'question_for')), value=f'<@{member_id}>', inline=True)
+    await message.edit(embed=embed)
+    await fill_reactions(message, reactions)
+
+
+async def my_logout():
+    save_data(data)
+    await bot.logout()
+
+
 '''def errors_count(s1: str, s2: str) -> int:
     # Evaluates Damerau-Levenshtein distance
     ls1 = len(s1)
@@ -254,8 +391,11 @@ def translate(lang_name: str, lang_path: tuple, replace_dict: dict = None, rand:
                 m[i][j] = min(m[i][j], m[i - 2][j - 2] + cost)  # transposition
     return m[ls1][ls2]'''
 
-
+#
 bot = commands.Bot(command_prefix=BOT_PREFIX, intents=intents)
+#
+
+# CHECKS
 
 
 @bot.check
@@ -263,9 +403,99 @@ async def no_reply_on_bots(ctx: commands.Context):
     return not ctx.author.bot
 
 
-async def my_logout():
-    save_data(data)
-    await bot.logout()
+def in_guild_home():
+    global data
+
+    async def predicate(ctx: commands.Context):
+        home_id = data.guilds[ctx.guild.id].home_id
+        if home_id is None:
+            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'need_home')))
+            raise MyCheckError
+        elif home_id != ctx.channel.id:
+            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'go_home')))
+            raise MyCheckError
+        return True
+
+    return commands.check(predicate)
+
+
+def in_guild_school():
+    global data
+
+    async def predicate(ctx: commands.Context):
+        school_id = data.guilds[ctx.guild.id].school_id
+        if school_id is None:
+            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'need_school')))
+            raise MyCheckError
+        elif school_id != ctx.channel.id:
+            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'go_to_school')))
+            raise MyCheckError
+        return True
+
+    return commands.check(predicate)
+
+
+def is_not_playing():
+    global data
+
+    async def predicate(ctx: commands.Context):
+        member_data = data.guilds[ctx.guild.id].members[ctx.author.id]
+        if member_data.games.active:
+            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'is_playing_yet')))
+            raise MyCheckError
+        return True
+
+    return commands.check(predicate)
+
+
+def is_not_testing():
+    global data
+
+    async def predicate(ctx: commands.Context):
+        member_data = data.guilds[ctx.guild.id].members[ctx.author.id]
+        if member_data.tests.active:
+            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'is_testing_yet')))
+            raise MyCheckError
+        return True
+
+    return commands.check(predicate)
+
+
+def is_playing():
+    global data
+
+    async def predicate(ctx: commands.Context):
+        member_data = data.guilds[ctx.guild.id].members[ctx.author.id]
+        if not member_data.games.active:
+            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'is_not_playing')))
+            raise MyCheckError
+        return True
+
+    return commands.check(predicate)
+
+
+def is_testing():
+    global data
+
+    async def predicate(ctx: commands.Context):
+        member_data = data.guilds[ctx.guild.id].members[ctx.author.id]
+        if not member_data.tests.active:
+            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'is_not_testing')))
+            raise MyCheckError
+        return True
+
+    return commands.check(predicate)
+
+
+class MyCheckError(commands.CheckFailure):
+    pass
+
+
+class NothingHere(commands.CommandNotFound):
+    pass
+
+
+# EVENTS
 
 
 @bot.event
@@ -333,27 +563,7 @@ async def on_reaction_add(reaction: discord.Reaction, user: discord.User):
                             await change_question(guild.id, user.id, message, delta)
 
 
-async def answer_question(guild_id: int, member_id: int, message: discord.Message, correct: bool):
-    global data
-    ench_data = data.guilds[guild_id].members[member_id].tests.ench
-    embed = message.embeds[0]
-    if correct:
-        ench_data.stats.right += 1
-        embed.colour = 65_280
-        await message.add_reaction('✅')
-    else:
-        ench_data.stats.wrong += 1
-        embed.colour = 16_711_680
-        await message.add_reaction('❌')
-    await message.edit(embed=embed)
-    del ench_data.questions[ench_data.index]
-    if len(ench_data.questions) == 0:
-        await finish_ench(guild_id, member_id)
-    else:
-        if len(ench_data.questions) == ench_data.index:
-            ench_data.index = 0
-            ench_data.questions_loop = True
-        await print_question(guild_id, member_id)
+# COMMANDS
 
 
 @bot.command()
@@ -555,7 +765,7 @@ async def sound(ctx: commands.Context, *, arg: str = ''):
 @bot.group()
 @commands.guild_only()
 async def play(ctx: commands.Context, *, arg: str = ''):  # todo
-    raise NothingHere
+    #raise NothingHere
     if not arg or arg == 'list':
         await ctx.send(translate(lang(ctx.guild.id), ('messages', 'games_list'), dict(list=", ".join(games))))
     else:
@@ -564,105 +774,12 @@ async def play(ctx: commands.Context, *, arg: str = ''):  # todo
         if guild in homes:
             home = homes[guild]
             if home == ctx.channel.id:
-                with home.typing():
-                    # TODO games
-                    pass
+                # TODO games
+                pass
             else:
                 await ctx.send(translate(lang(ctx.guild.id), ('messages', 'go_home')))
         else:
             await ctx.send(translate(lang(ctx.guild.id), ('messages', 'need_home')))
-
-
-def in_guild_home():
-    global data
-
-    async def predicate(ctx: commands.Context):
-        home_id = data.guilds[ctx.guild.id].home_id
-        if home_id is None:
-            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'need_home')))
-            raise MyCheckError
-        elif home_id != ctx.channel.id:
-            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'go_home')))
-            raise MyCheckError
-        return True
-
-    return commands.check(predicate)
-
-
-def in_guild_school():
-    global data
-
-    async def predicate(ctx: commands.Context):
-        school_id = data.guilds[ctx.guild.id].school_id
-        if school_id is None:
-            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'need_school')))
-            raise MyCheckError
-        elif school_id != ctx.channel.id:
-            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'go_to_school')))
-            raise MyCheckError
-        return True
-
-    return commands.check(predicate)
-
-
-def is_not_playing():
-    global data
-
-    async def predicate(ctx: commands.Context):
-        member_data = data.guilds[ctx.guild.id].members[ctx.author.id]
-        if member_data.games.active:
-            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'is_playing_yet')))
-            raise MyCheckError
-        return True
-
-    return commands.check(predicate)
-
-
-def is_not_testing():
-    global data
-
-    async def predicate(ctx: commands.Context):
-        member_data = data.guilds[ctx.guild.id].members[ctx.author.id]
-        if member_data.tests.active:
-            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'is_testing_yet')))
-            raise MyCheckError
-        return True
-
-    return commands.check(predicate)
-
-
-def is_playing():
-    global data
-
-    async def predicate(ctx: commands.Context):
-        member_data = data.guilds[ctx.guild.id].members[ctx.author.id]
-        if not member_data.games.active:
-            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'is_not_playing')))
-            raise MyCheckError
-        return True
-
-    return commands.check(predicate)
-
-
-def is_testing():
-    global data
-
-    async def predicate(ctx: commands.Context):
-        member_data = data.guilds[ctx.guild.id].members[ctx.author.id]
-        if not member_data.tests.active:
-            await ctx.send(translate(lang(ctx.guild.id), ('messages', 'is_not_testing')))
-            raise MyCheckError
-        return True
-
-    return commands.check(predicate)
-
-
-class MyCheckError(commands.CheckFailure):
-    pass
-
-
-class NothingHere(commands.CommandNotFound):
-    pass
 
 
 @bot.group()
@@ -684,36 +801,6 @@ async def list_(ctx: commands.Context):
 @is_testing()
 async def ench_finish(ctx: commands.Context):
     await finish_ench(ctx.guild.id, ctx.author.id)
-
-
-async def finish_ench(guild_id: int, member_id: int):
-    global data, bot
-    guild = bot.get_guild(guild_id)
-    member_data = data.guilds[guild_id].members[member_id]
-    school = guild.get_channel(data.guilds[guild_id].school_id)
-    member_data.tests.active = False
-    ench_data = member_data.tests.ench
-    ench_data.message_id = None
-    if not ench_data.some_questions:
-        pass
-    else:
-        stats_data = ench_data.stats
-        counts = [stats_data.right, stats_data.wrong]
-        unanswered = stats_data.questions_count - sum(counts)
-        if unanswered:
-            counts.append(unanswered)
-        total = stats_data.questions_count
-        lines = get_propotional_lines(*counts)
-        fields = [{'name': f'✅  {counts[0]}  ({round(100 * counts[0] / total, 1)}%)',
-                   'value': lines[0], 'inline': False},
-                  {'name': f'❌  {counts[1]}  ({round(100 * counts[1] / total, 1)}%)',
-                   'value': lines[1], 'inline': False}]
-        if unanswered:
-            fields.append({'name': f'❔  {counts[2]}  ({round(100 * counts[2] / total, 1)}%)',
-                           'value': lines[2], 'inline': False})
-        embed_dict = {'title': translate(lang(guild_id), ('tests', 'you_answered')),
-                      'color': 16744192, 'fields': fields}
-        await school.send(f'<@{member_id}>', embed=discord.Embed.from_dict(embed_dict))
 
 
 @test.command(name='resume')
@@ -772,88 +859,6 @@ async def start_ench(ctx: commands.Context, count: int = 1):
         ench_data.some_questions = count != 1
         ench_data.stats = EnchStatsData(len(questions))
         await print_question(ctx.guild.id, ctx.author.id)
-
-
-async def print_question(guild_id: int, member_id: int):
-    global data, bot
-    guild = bot.get_guild(guild_id)
-    guild_data = data.guilds[guild_id]
-    ench_data = guild_data.members[member_id].tests.ench
-    school = guild.get_channel(guild_data.school_id)
-    questions = guild_data.members[member_id].tests.ench.questions
-    embed = discord.Embed.from_dict(questions[ench_data.index].embed_dict)
-    questions_count = len(questions)
-    reactions = ['1️⃣', '2️⃣', '3️⃣']
-    if questions_count != 1:
-        if ench_data.index != 0 or ench_data.questions_loop:
-            embed.add_field(name='⬅️', value=translate(lang(guild_id), ('tests', 'previous_question')), inline=True)
-            reactions.insert(0, '⬅️')
-        embed.add_field(name='➡️', value=translate(lang(guild_id), ('tests', 'next_question')), inline=True)
-        reactions.append('➡️')
-    #embed.add_field(name=translate(lang(guild_id), ('tests', 'for')), value=f'<@{member_id}>', inline=True)
-    msg = await school.send(f'<@{member_id}>', embed=embed)
-    ench_data.message_id = msg.id
-    await fill_reactions(msg, reactions)
-
-
-async def change_question(guild_id: int, member_id: int, message: discord.Message, delta: int):
-    global data
-    ench_data = data.guilds[guild_id].members[member_id].tests.ench
-    questions = ench_data.questions
-    question_index = ench_data.index
-    questions_count = len(questions)
-    new_question_index = (question_index + delta) % questions_count
-    ench_data.questions_loop = ench_data.questions_loop or (question_index + delta == questions_count)
-    ench_data.index = new_question_index
-    embed = discord.Embed.from_dict(questions[new_question_index].embed_dict)
-    reactions = ['1️⃣', '2️⃣', '3️⃣', '➡️']
-    if (new_question_index != 0 or ench_data.questions_loop) and questions_count != 1:
-        embed.add_field(name='⬅️', value=translate(lang(guild_id), ('tests', 'previous_question')), inline=True)
-        reactions.insert(0, '⬅️')
-    embed.add_field(name='➡️', value=translate(lang(guild_id), ('tests', 'next_question')), inline=True)
-    embed.add_field(name=translate(lang(guild_id), ('tests', 'question_for')), value=f'<@{member_id}>', inline=True)
-    await message.edit(embed=embed)
-    await fill_reactions(message, reactions)
-
-
-async def fill_reactions(message: discord.Message, reactions: iter):
-    await message.clear_reactions()
-    for reaction in reactions:
-        await message.add_reaction(reaction)
-
-
-async def get_stats_line_emojis(guild):
-    global stats_line_emojis
-    emojis = await guild.fetch_emojis()
-    for i in range(len(stats_line_emojis)):
-        for e in emojis:
-            if stats_line_emojis[i] == e.name:
-                stats_line_emojis[i] = e
-
-
-def get_stats_line(length: int) -> str:
-    global bot, stats_line_emojis
-    if length == 1:
-        line = str(stats_line_emojis[0])
-    else:
-        line = str(stats_line_emojis[1]) + (length - 2) * str(stats_line_emojis[2]) + str(stats_line_emojis[3])
-    return line
-
-
-def get_propotional_lines(*weights) -> list:
-    total = sum(weights)
-    if total != 0:
-        lines = []
-        for i in weights:
-            lines.append(get_stats_line(int(MAX_STATS_LINE_LENGTH * i / total - 0.001) + 1))
-        return lines
-
-
-# ENCH DATA
-
-
-def load_ench_data() -> dict:
-    return load_json('activities/ench/' + ENCH_VERSION)
 
 
 class Question:
@@ -935,8 +940,8 @@ class Question:
         ench = choice(enchantments)
         description_substitution = {'ench': translate(lang(self._guild_id), ('ench', 'enchantments', ench))}
         ench_items = set(enchs[ench]['primary_ench_items']) | set(enchs[ench]['secondary_ench_items'])
-        available_items = set(ench_test_data['items']) - ench_items
-        items = [sample(available_items, 2)]
+        available_items = list(set(ench_test_data['items']) - ench_items)
+        items = sample(available_items, 2)
         answer_index = randrange(3)
         items.insert(answer_index, choice(list(ench_items)))
         answer_options_lang_path = [('ench', 'items', str(i)) for i in items]
@@ -948,11 +953,29 @@ class Question:
         ench = choice(list(enchs))
         description_substitution = {'ench': translate(lang(self._guild_id), ('ench', 'enchantments', ench))}
         ench_items = set(enchs[ench]['primary_ench_items'])
-        available_items = set(ench_test_data['items']) - ench_items
-        items = [sample(available_items, 2)]
-        answer_index = randrange(3)
-        items.insert(answer_index, choice(list(ench_items)))
-        answer_options_lang_path = [('ench', 'items', str(i)) for i in items]
+        available_items = list(set(ench_test_data['items']) - ench_items)
+        item1_index = randrange(len(available_items))
+        items = [available_items.pop(item1_index)]
+        if ench_items:
+            item2 = sample(available_items + [None], 1, counts=[1] * len(available_items) + [8])[0]
+            if item2 is None:
+                answer_index = randrange(2)
+                items.insert(answer_index, choice(list(ench_items)))
+                items.append(item2)
+            else:
+                items.append(item2)
+                answer_index = randrange(3)
+                items.insert(answer_index, choice(list(ench_items)))
+        else:
+            items.append(choice(available_items))
+            items.append(None)
+            answer_index = 2
+        answer_options_lang_path = []
+        for i in items:
+            if i is None:
+                answer_options_lang_path.append(('tests', 'no_such_item'))
+            else:
+                answer_options_lang_path.append(('ench', 'items', str(i)))
         return description_substitution, answer_options_lang_path, answer_index, False
 
 
