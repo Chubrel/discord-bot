@@ -51,6 +51,7 @@
 		"dont_know": "Не знаю",
 		"impossible": "Это невозможно",
 		"next_question": "Следующий вопрос",
+		"no_such_item": "Нет такого предмета",
 		"previous_question": "Предыдущий вопрос"
 	},
 	"quotes": [
