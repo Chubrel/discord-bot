@@ -1,0 +1,743 @@
+{
+    "enchantments": {
+        "aqua_affinity": {
+            "max_level": 1,
+            "max_ench_table_level": 1,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "helmet"
+            ],
+            "secondary_ench_items": []
+        },
+        "bane_of_arthropods": {
+            "max_level": 5,
+            "max_ench_table_level": 5,
+            "incompatible_with": [
+                "sharpness",
+                "smite"
+            ],
+            "primary_ench_items": [
+                "sword"
+            ],
+            "secondary_ench_items": [
+                "axe"
+            ]
+        },
+        "blast_protection": {
+            "max_level": 4,
+            "max_ench_table_level": 4,
+            "incompatible_with": [
+                "fire_protection",
+                "protection",
+                "projectile_protection"
+            ],
+            "primary_ench_items": [
+                "helmet",
+                "leggings",
+                "chestplate",
+                "boots"
+            ],
+            "secondary_ench_items": []
+        },
+        "channeling": {
+            "max_level": 1,
+            "max_ench_table_level": 1,
+            "incompatible_with": [
+                "riptide"
+            ],
+            "primary_ench_items": [
+                "trident"
+            ],
+            "secondary_ench_items": []
+        },
+        "curse_of_binding": {
+            "max_level": 1,
+            "max_ench_table_level": 0,
+            "incompatible_with": [],
+            "primary_ench_items": [],
+            "secondary_ench_items": [
+                "pumpkin",
+                "head",
+                "boots",
+                "helmet",
+                "elytra",
+                "chestplate",
+                "leggings"
+            ]
+        },
+        "curse_of_vanishing": {
+            "max_level": 1,
+            "max_ench_table_level": 0,
+            "incompatible_with": [],
+            "primary_ench_items": [],
+            "secondary_ench_items": [
+                "sword",
+                "axe",
+                "head",
+                "trident",
+                "chestplate",
+                "shovel",
+                "warped_fungus_on_a_stick",
+                "boots",
+                "helmet",
+                "compass",
+                "hoe",
+                "pumpkin",
+                "pickaxe",
+                "shield",
+                "carrot_on_a_stick",
+                "flint_and_steel",
+                "fishing_rod",
+                "bow",
+                "shears",
+                "crossbow",
+                "elytra",
+                "leggings"
+            ]
+        },
+        "depth_strider": {
+            "max_level": 3,
+            "max_ench_table_level": 3,
+            "incompatible_with": [
+                "frost_walker"
+            ],
+            "primary_ench_items": [
+                "boots"
+            ],
+            "secondary_ench_items": []
+        },
+        "efficiency": {
+            "max_level": 5,
+            "max_ench_table_level": 4,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "pickaxe",
+                "hoe",
+                "axe",
+                "shovel"
+            ],
+            "secondary_ench_items": [
+                "shears"
+            ]
+        },
+        "feather_falling": {
+            "max_level": 4,
+            "max_ench_table_level": 4,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "boots"
+            ],
+            "secondary_ench_items": []
+        },
+        "fire_aspect": {
+            "max_level": 2,
+            "max_ench_table_level": 2,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "sword"
+            ],
+            "secondary_ench_items": []
+        },
+        "fire_protection": {
+            "max_level": 4,
+            "max_ench_table_level": 4,
+            "incompatible_with": [
+                "protection",
+                "projectile_protection",
+                "blast_protection"
+            ],
+            "primary_ench_items": [
+                "helmet",
+                "leggings",
+                "chestplate",
+                "boots"
+            ],
+            "secondary_ench_items": []
+        },
+        "flame": {
+            "max_level": 1,
+            "max_ench_table_level": 1,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "bow"
+            ],
+            "secondary_ench_items": []
+        },
+        "fortune": {
+            "max_level": 3,
+            "max_ench_table_level": 3,
+            "incompatible_with": [
+                "silk_touch"
+            ],
+            "primary_ench_items": [
+                "pickaxe",
+                "hoe",
+                "axe",
+                "shovel"
+            ],
+            "secondary_ench_items": []
+        },
+        "frost_walker": {
+            "max_level": 2,
+            "max_ench_table_level": 0,
+            "incompatible_with": [
+                "depth_strider"
+            ],
+            "primary_ench_items": [],
+            "secondary_ench_items": [
+                "boots"
+            ]
+        },
+        "impaling": {
+            "max_level": 5,
+            "max_ench_table_level": 5,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "trident"
+            ],
+            "secondary_ench_items": []
+        },
+        "infinity": {
+            "max_level": 1,
+            "max_ench_table_level": 1,
+            "incompatible_with": [
+                "mending"
+            ],
+            "primary_ench_items": [
+                "bow"
+            ],
+            "secondary_ench_items": []
+        },
+        "knockback": {
+            "max_level": 2,
+            "max_ench_table_level": 2,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "sword"
+            ],
+            "secondary_ench_items": []
+        },
+        "looting": {
+            "max_level": 3,
+            "max_ench_table_level": 3,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "sword"
+            ],
+            "secondary_ench_items": []
+        },
+        "loyalty": {
+            "max_level": 3,
+            "max_ench_table_level": 3,
+            "incompatible_with": [
+                "riptide"
+            ],
+            "primary_ench_items": [
+                "trident"
+            ],
+            "secondary_ench_items": []
+        },
+        "luck_of_the_sea": {
+            "max_level": 3,
+            "max_ench_table_level": 3,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "fishing_rod"
+            ],
+            "secondary_ench_items": []
+        },
+        "lure": {
+            "max_level": 3,
+            "max_ench_table_level": 3,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "fishing_rod"
+            ],
+            "secondary_ench_items": []
+        },
+        "mending": {
+            "max_level": 1,
+            "max_ench_table_level": 0,
+            "incompatible_with": [
+                "infinity"
+            ],
+            "primary_ench_items": [],
+            "secondary_ench_items": [
+                "sword",
+                "axe",
+                "trident",
+                "chestplate",
+                "shovel",
+                "warped_fungus_on_a_stick",
+                "boots",
+                "helmet",
+                "hoe",
+                "pickaxe",
+                "shield",
+                "carrot_on_a_stick",
+                "flint_and_steel",
+                "fishing_rod",
+                "bow",
+                "shears",
+                "crossbow",
+                "elytra",
+                "leggings"
+            ]
+        },
+        "multishot": {
+            "max_level": 1,
+            "max_ench_table_level": 1,
+            "incompatible_with": [
+                "piercing"
+            ],
+            "primary_ench_items": [
+                "crossbow"
+            ],
+            "secondary_ench_items": []
+        },
+        "piercing": {
+            "max_level": 4,
+            "max_ench_table_level": 4,
+            "incompatible_with": [
+                "multishot"
+            ],
+            "primary_ench_items": [
+                "crossbow"
+            ],
+            "secondary_ench_items": []
+        },
+        "power": {
+            "max_level": 5,
+            "max_ench_table_level": 4,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "bow"
+            ],
+            "secondary_ench_items": []
+        },
+        "projectile_protection": {
+            "max_level": 4,
+            "max_ench_table_level": 4,
+            "incompatible_with": [
+                "fire_protection",
+                "blast_protection",
+                "protection"
+            ],
+            "primary_ench_items": [
+                "helmet",
+                "leggings",
+                "chestplate",
+                "boots"
+            ],
+            "secondary_ench_items": []
+        },
+        "protection": {
+            "max_level": 4,
+            "max_ench_table_level": 4,
+            "incompatible_with": [
+                "fire_protection",
+                "blast_protection",
+                "projectile_protection"
+            ],
+            "primary_ench_items": [
+                "helmet",
+                "leggings",
+                "chestplate",
+                "boots"
+            ],
+            "secondary_ench_items": []
+        },
+        "punch": {
+            "max_level": 2,
+            "max_ench_table_level": 2,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "bow"
+            ],
+            "secondary_ench_items": []
+        },
+        "quick_charge": {
+            "max_level": 3,
+            "max_ench_table_level": 2,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "crossbow"
+            ],
+            "secondary_ench_items": []
+        },
+        "respiration": {
+            "max_level": 3,
+            "max_ench_table_level": 3,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "helmet"
+            ],
+            "secondary_ench_items": []
+        },
+        "riptide": {
+            "max_level": 3,
+            "max_ench_table_level": 3,
+            "incompatible_with": [
+                "channeling",
+                "loyalty"
+            ],
+            "primary_ench_items": [
+                "trident"
+            ],
+            "secondary_ench_items": []
+        },
+        "sharpness": {
+            "max_level": 5,
+            "max_ench_table_level": 4,
+            "incompatible_with": [
+                "bane_of_arthropods",
+                "smite"
+            ],
+            "primary_ench_items": [
+                "sword"
+            ],
+            "secondary_ench_items": [
+                "axe"
+            ]
+        },
+        "silk_touch": {
+            "max_level": 0,
+            "max_ench_table_level": 0,
+            "incompatible_with": [
+                "fortune"
+            ],
+            "primary_ench_items": [
+                "pickaxe",
+                "hoe",
+                "axe",
+                "shovel"
+            ],
+            "secondary_ench_items": []
+        },
+        "smite": {
+            "max_level": 5,
+            "max_ench_table_level": 5,
+            "incompatible_with": [
+                "bane_of_arthropods",
+                "sharpness"
+            ],
+            "primary_ench_items": [
+                "sword"
+            ],
+            "secondary_ench_items": [
+                "axe"
+            ]
+        },
+        "soul_speed": {
+            "max_level": 3,
+            "max_ench_table_level": 0,
+            "incompatible_with": [],
+            "primary_ench_items": [],
+            "secondary_ench_items": [
+                "boots"
+            ]
+        },
+        "sweeping_edge": {
+            "max_level": 3,
+            "max_ench_table_level": 3,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "sword"
+            ],
+            "secondary_ench_items": []
+        },
+        "thorns": {
+            "max_level": 3,
+            "max_ench_table_level": 2,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "chestplate"
+            ],
+            "secondary_ench_items": [
+                "helmet",
+                "leggings",
+                "boots"
+            ]
+        },
+        "unbreaking": {
+            "max_level": 3,
+            "max_ench_table_level": 3,
+            "incompatible_with": [],
+            "primary_ench_items": [
+                "fishing_rod",
+                "bow",
+                "shovel",
+                "crossbow",
+                "sword",
+                "axe",
+                "boots",
+                "helmet",
+                "trident",
+                "pickaxe",
+                "leggings",
+                "hoe",
+                "chestplate"
+            ],
+            "secondary_ench_items": [
+                "warped_fungus_on_a_stick",
+                "elytra",
+                "shield",
+                "carrot_on_a_stick",
+                "flint_and_steel"
+            ]
+        }
+    },
+    "items": {
+        "axe": {
+            "primary_enchs": [
+                "fortune",
+                "silk_touch",
+                "efficiency",
+                "unbreaking"
+            ],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "smite",
+                "bane_of_arthropods",
+                "sharpness",
+                "mending"
+            ]
+        },
+        "boots": {
+            "primary_enchs": [
+                "depth_strider",
+                "projectile_protection",
+                "protection",
+                "fire_protection",
+                "unbreaking",
+                "blast_protection",
+                "feather_falling"
+            ],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "curse_of_binding",
+                "soul_speed",
+                "frost_walker",
+                "mending",
+                "thorns"
+            ]
+        },
+        "bow": {
+            "primary_enchs": [
+                "punch",
+                "unbreaking",
+                "flame",
+                "power",
+                "infinity"
+            ],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "mending"
+            ]
+        },
+        "carrot_on_a_stick": {
+            "primary_enchs": [],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "unbreaking",
+                "mending"
+            ]
+        },
+        "chestplate": {
+            "primary_enchs": [
+                "projectile_protection",
+                "protection",
+                "fire_protection",
+                "unbreaking",
+                "thorns",
+                "blast_protection"
+            ],
+            "secondary_enchs": [
+                "mending",
+                "curse_of_vanishing",
+                "curse_of_binding"
+            ]
+        },
+        "compass": {
+            "primary_enchs": [],
+            "secondary_enchs": [
+                "curse_of_vanishing"
+            ]
+        },
+        "crossbow": {
+            "primary_enchs": [
+                "quick_charge",
+                "unbreaking",
+                "piercing",
+                "multishot"
+            ],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "mending"
+            ]
+        },
+        "elytra": {
+            "primary_enchs": [],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "curse_of_binding",
+                "unbreaking",
+                "mending"
+            ]
+        },
+        "fishing_rod": {
+            "primary_enchs": [
+                "unbreaking",
+                "luck_of_the_sea",
+                "lure"
+            ],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "mending"
+            ]
+        },
+        "flint_and_steel": {
+            "primary_enchs": [],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "unbreaking",
+                "mending"
+            ]
+        },
+        "head": {
+            "primary_enchs": [],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "curse_of_binding"
+            ]
+        },
+        "helmet": {
+            "primary_enchs": [
+                "aqua_affinity",
+                "projectile_protection",
+                "protection",
+                "fire_protection",
+                "unbreaking",
+                "respiration",
+                "blast_protection"
+            ],
+            "secondary_enchs": [
+                "mending",
+                "curse_of_vanishing",
+                "curse_of_binding",
+                "thorns"
+            ]
+        },
+        "hoe": {
+            "primary_enchs": [
+                "fortune",
+                "unbreaking",
+                "efficiency",
+                "silk_touch"
+            ],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "mending"
+            ]
+        },
+        "leggings": {
+            "primary_enchs": [
+                "projectile_protection",
+                "protection",
+                "fire_protection",
+                "unbreaking",
+                "blast_protection"
+            ],
+            "secondary_enchs": [
+                "mending",
+                "curse_of_vanishing",
+                "curse_of_binding",
+                "thorns"
+            ]
+        },
+        "pickaxe": {
+            "primary_enchs": [
+                "fortune",
+                "unbreaking",
+                "efficiency",
+                "silk_touch"
+            ],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "mending"
+            ]
+        },
+        "pumpkin": {
+            "primary_enchs": [],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "curse_of_binding"
+            ]
+        },
+        "shears": {
+            "primary_enchs": [],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "efficiency",
+                "mending"
+            ]
+        },
+        "shield": {
+            "primary_enchs": [],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "unbreaking",
+                "mending"
+            ]
+        },
+        "shovel": {
+            "primary_enchs": [
+                "fortune",
+                "unbreaking",
+                "efficiency",
+                "silk_touch"
+            ],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "mending"
+            ]
+        },
+        "sword": {
+            "primary_enchs": [
+                "bane_of_arthropods",
+                "smite",
+                "knockback",
+                "unbreaking",
+                "fire_aspect",
+                "sharpness",
+                "sweeping_edge",
+                "looting"
+            ],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "mending"
+            ]
+        },
+        "trident": {
+            "primary_enchs": [
+                "channeling",
+                "riptide",
+                "unbreaking",
+                "impaling",
+                "loyalty"
+            ],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "mending"
+            ]
+        },
+        "warped_fungus_on_a_stick": {
+            "primary_enchs": [],
+            "secondary_enchs": [
+                "curse_of_vanishing",
+                "unbreaking",
+                "mending"
+            ]
+        }
+    }
+}
