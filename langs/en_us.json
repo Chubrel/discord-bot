@@ -7,6 +7,7 @@
 		"lang_changed": "Language have changed successfully!",
 		"lang_set": "**Language set**",
 		"available_langs": "**Available languages**",
+		"too_many_questions": "The test can't contain more than ${count} questions.",
 		"messages_list": "The list of available messages: ${list}.",
 		"images_list": "The list of available images: ${list}.",
 		"sounds_list": "The list of available sounds: ${list}.",
@@ -32,27 +33,25 @@
 		"need_school": "I need a school so we could study!",
 		"abort_test": "Testing finished.",
 		"abort_game": "Game finished.",
-		"sethome_warning": "Ты точно хочешь, чтобы я переехал? Все текущие игры (${games_count}) будут прекращены.\nЧтобы продолжить, введи \"&sethome confirm\"",
-		"delhome_warning": "Ты точно хочешь лишить меня единственного дома? Все текущие игры (${games_count}) будут прекращены.\nЧтобы продолжить, введи \"&delhome confirm\"",
-		"setschool_warning": "Ты точно хочешь, чтобы я учился в другом месте? Все текущие тесты (${tests_count}) будут закончены.\nЧтобы продолжить, введи \"&sethome confirm\"",
-		"delschool_warning": "Ты точно хочешь лишить меня единственной школы? Все текущие тесты (${tests_count}) будут закончены.\nЧтобы продолжить, введи \"&delhome confirm\""
+		"is_testing_yet": "How about completing the previous test? 😉",
+		"is_playing_yet": "How about we finish the last game? 😉",
+		"is_not_testing": "You’re not taking the test.",
+		"is_not_playing": "You're not playing anything.",
+		"sethome_warning": "Are you sure you want me to move? All current games (${games_count}) will be terminated.\nTo continue, enter \"&sethome confirm\"",
+		"delhome_warning": "Are you sure you want to deprive me of my only home? All current games (${games_count}) will be terminated.\nTo continue, enter \"&delhome confirm\"",
+		"setschool_warning": "Are you sure you want me to go somewhere else? All current tests (${tests_count}) will be finished.\nTo continue, enter \"&sethome confirm\"",
+		"delschool_warning": "Are you sure you want to deprive me of my only school? All current tests (${tests_count}) will be finished.\nTo continue, enter \"&delhome confirm\""
 	},
-	"responses": {
-		"correct_answer": [
-			"✅"
-		],
-		"incorrect_answer": [
-			"❌"
-		],
-		"inaccurate_input": [
-			"Might you mean ${guess}?"
-		],
-		"true": [
-			"Yes"
-		],
-		"false": [
-			"No"
-		]
+	"tests": {
+		"you_answered": "You've completed the test!",
+		"question": "Question",
+		"question_number": " №${number}",
+		"for": "For",
+		"no_right_answer": "There is no correct answer",
+		"dont_know": "Don't know",
+		"impossible": "It's impossible",
+		"next_question": "Next question",
+		"previous_question": "Previous question"
 	},
 	"quotes": [
 		"«",
@@ -60,47 +59,27 @@
 		"„",
 		"“"
 	],
+	"roman_numerals": {
+		"1": "I",
+		"2": "II",
+		"3": "III",
+		"4": "IV",
+		"5": "V"
+	},
 	"ench": {
 		"questions": {
-			"max_ench_lvl": [
-				"Какой максимальный уровень чар ${ench}?"
-			],
-			"max_table_ench_lvl": [
-				"Какой максимальный уровень чар ${ench} можно получить, используя только чародейский стол?"
-			],
-			"get_ench_item": [
-				"На каком из перечисленных предметов можно получить получить чары ${ench}?"
-			],
-			"get_table_ench_item": [
-				"На каком из перечисленных предметов можно получить получить чары ${ench}, используя только чародейский стол?"
-			],
-			"ench_incompatible": [
-				"Какое из перечисленных чар несовместимо с ${ench}?"
-			],
-			"get_item_ench": [
-				"Какое из перечисленных чар можно наложить на ${item}?"
-			],
-			"ench_property": [
-				"Какое из перечисленных чар даёт предмету следующее свойство: ${property}?"
-			],
-			"combine_items": [
-				"Каков будет результат соединения на наковальне следующих предметов:\n– ${item1} ${ench_lvl_list1}\n– ${item1} ${ench_lvl_list1}?"
-			],
-			"get_items_ench": [
-				"Какое из перечисленных чар можно наложить на каждый из следующих предметов:\n${item_list}?"
-			],
-			"get_ench_items": [
-				"В каком из перечисленных списков все предметы можно зачаровать на ${ench}?"
-			],
-			"ench_exists": [
-				"Какое из перечисленных чар не существует?"
-			],
-			"ench_lvl_exists": [
-				"Какое из перечисленных чар с уровнем невозможно получить?"
-			]
-		},
-		"notes": {
-			"": ""
+			"max_ench_lvl": "What is the maximum enchantment level ${ench}?",
+			"max_table_ench_lvl": "What is the maximum enchantment level ${ench} can you get it using only the enchanting table?",
+			"get_ench_item": "On which of the listed items can you get enchantments ${ench}?",
+			"get_table_ench_item": "On which of the listed items can you get enchantments ${ench}, using only the enchanting table?",
+			"ench_incompatible": "Which of the following enchantments is incompatible with ${ench}?",
+			"get_item_ench": "Which of the following enchantments can be cast on ${item}?",
+			"ench_property": "Which of the following enchantments gives the item the following property: ${property}?",
+			"combine_items": "What will be the result of connecting the following items on the anvil:\n– ${item1} ${ench_lvl_list1}\n– ${item2} ${ench_lvl_list2}?",
+			"get_items_ench": "Which of the following spells can be cast on each of the following items:\n${item_list}?",
+			"get_ench_items": "In which of the following lists all items can be enchanted on ${ench}?",
+			"ench_exists": "Which of the following enchantments do not exist?",
+			"ench_lvl_exists": "Which of the following enchantments with a level cannot be obtained?"
 		},
 		"enchantments": {
 			"aqua_affinity": "Aqua Affinity",
@@ -163,70 +142,70 @@
 			"fishing_rod": "Fishing Rod",
 			"carrot_on_a_stick": "Carrot on a Stick",
 			"warped_fungus_on_a_stick": "Warped Fungus on a Stick",
-			"pumpkin": "Pumpkin",
+			"pumpkin": "Carved pumpkin",
 			"shield": "Shield"
 		},
 		"false_enchantments": [
-			"Спешка",
-			"Ускорение",
-			"Лечение",
-			"Тесак",
-			"Вампиризм",
-			"Кровотечение",
-			"Мощный удар",
-			"Поражение",
-			"Сбор",
-			"Укрепление",
-			"Проклятие тяжести",
-			"Точность",
-			"Орлиный глаз",
-			"Удар небес",
-			"Неистовство",
-			"Ярость",
-			"Проклятие жадности",
-			"Переплавка",
-			"Рёв",
-			"Полёт",
-			"Скорость",
-			"Проклятие усталости",
-			"Сопротивление",
-			"Отравление",
-			"Поглощение",
-			"Насыщение",
-			"Проклятие невезения",
-			"Морская сила"
+			"Haste",
+			"Acceleration",
+			"Treatment",
+			"Cleaver",
+			"Vampirism",
+			"Bleeding",
+			"Powerful blow",
+			"Defeat",
+			"Gathering",
+			"Strengthening",
+			"Curse of Gravity",
+			"Accuracy",
+			"Eagle Eye",
+			"Strike of the heavens",
+			"Frenzy",
+			"Rage",
+			"Curse of Greed",
+			"Melting",
+			"Roar",
+			"Flight",
+			"Speed",
+			"Curse of Fatigue",
+			"Resistance",
+			"Poisoning",
+			"Absorption",
+			"Saturation",
+			"Curse of Bad Luck",
+			"Sea power"
 		],
 		"enchantment_properties": {
 			"aqua_affinity": [
-				"Позволяет разрушать блоки под водой со скоростью, как на суше"
+				"Allows you to destroy blocks under water at a speed similar to on land"
 			],
 			"bane_of_arthropods": [
-				"Наносит дополнительный урон и даёт эффект «Замедление IV» паукам, пещерным паукам, чешуйницам, чешуйницам края и пчёлам"
+				"Deals additional damage and gives a Slowness IV effect to spiders, cave spiders, silverfish, endermite, and bees"
 			],
 			"blast_protection": [
-				"Увеличивает защиту от взрывов",
-				"Уменьшает отдачу от взрывов"
+				"Increases protection against explosions",
+				"Reduces recoil from the explosions"
 			],
 			"channeling": [
-				"Во время грозы трезубец, попавший в цель, вызывает молнию"
+				"During a thunderstorm, a trident that hits the target causes lightning"
 			],
 			"curse_of_binding": [
-				"Не даёт снять броню"
+				"Does not allow you to remove the armor"
 			],
 			"curse_of_vanishing": [
-				"Предмет пропадает при смерти"
+				"The item disappears at death"
 			],
 			"depth_strider": [
-				"Увеличивает скорость передивижения под водой"
+				"Increases the speed of peredivizheniya under water"
 			],
 			"efficiency": [
-				"Увеличивает скорость разрушения блока"
+				"Increases the speed of block destruction"
 			],
 			"feather_falling": [
-				"Уменьшает урон от падения"
+				"Reduces fall damage"
 			],
 			"fire_aspect": [
-				"Удары поджигают цель"
+				"Strikes sets fire on target"
 			],
 			"fire_protection": [
 				"Увеличивает защиту от огня, лавы и огненных шаров ифритов",
