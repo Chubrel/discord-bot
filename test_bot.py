@@ -22,7 +22,7 @@ class MyClient(discord.Client):
         while not self.is_closed():
             counter += 1
             print(0)
-            await channel.send(counter)
+            await channel.send(counter, )
             print(1)
             await asyncio.sleep(60) # task runs every 60 seconds
 
@@ -34,8 +34,8 @@ class MyClient(discord.Client):
         
         if msg == '&kill':
             if str(message.author) == 'Chubrel#9378':
-                await message.channel.send('Какой жестокий мир!')
-                await message.channel.send('Отключаюсь...')
+                await message.channel.send('пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ!', )
+                await message.channel.send('пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ...', )
                 await self.close()
 
 
