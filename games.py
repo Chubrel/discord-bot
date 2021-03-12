@@ -2,9 +2,9 @@
 # coding=utf-8
 
 
-from core import *
+from random import randrange, shuffle
 
-from random import randrange, sample, shuffle
+from tools import *
 
 
 _games = ('codenames',)  # ('guess', 'numb', 'b&c', 'stones')

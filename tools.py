@@ -8,7 +8,7 @@ from random import choice, sample
 from string import Template
 
 from errors import *
-from data import *
+from data_classes import *
 
 
 # CONSTANTS
@@ -522,9 +522,6 @@ class ISOFormatConverter(commands.Converter):
 
 
 class Checks:
-
-    def __init__(self, bot):
-        self.bot = bot
 
     @classmethod
     def in_guild_home(cls):

@@ -2,9 +2,9 @@
 # coding=utf-8
 
 
-from core import *
+from random import randrange
 
-from random import choice, randrange, sample
+from tools import *
 
 
 ENCH_TEST_MAX_QUESTIONS_COUNT = 10
@@ -16,8 +16,6 @@ _test_codes = {'ENCH': 'Enchantment'}
 _question_numbers = ('1️⃣', '2️⃣', '3️⃣')
 _test_options_number = len(_question_numbers)
 _question_changers = ('⬅️', '➡️')
-
-ench_test_data = Loaders.load_ench_data()
 
 
 def get_options(path: tuple) -> list:

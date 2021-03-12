@@ -2,7 +2,7 @@
 # coding=utf-8
 
 
-from core import *
+from tools import *
 
 
 def count_tests(guild_id: int) -> int:

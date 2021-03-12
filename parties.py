@@ -2,7 +2,7 @@
 # coding=utf-8
 
 
-from core import *
+from tools import *
 
 
 PARTY_LIFETIME = 3600

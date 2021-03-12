@@ -4,7 +4,7 @@
 
 import asyncio
 
-from core import *
+from tools import *
 
 
 REACT_MAX_EMOJI_COUNT = 10

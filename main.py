@@ -3,10 +3,11 @@
 """Chubaka bot"""
 
 
-import discord
-from discord.ext import commands
+from games import *
+from tests import *
+from ballots import *
+from parties import *
 
-from core import *
 
 # ⛔🚫🛑💯❓❗
 
